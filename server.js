@@ -7,16 +7,21 @@ require('dotenv').config();
 const app = express();
 app.use(express.json());
 
-mongoose.connect(`mongodb+srv://sarthakvs:${process.env.password}@urlshortener.cswethd.mongodb.net/?retryWrites=true&w=majority&appName=urlShortener`, {
+
+mongoose.connect(`mongodb://localhost:27017/urlshortener`, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
+
 .then(() => {
   console.log('Connected to MongoDB');
 })
+
 .catch((error) => {
   console.error('Error connecting to MongoDB:', error);
 });
+
+
 const urlSchema = new mongoose.Schema({
     fullUrl: {
       type: String,
@@ -46,10 +51,12 @@ const urlSchema = new mongoose.Schema({
       res.status(500).json({ error: 'Internal server error' });
     }
   });
+
   app.use(express.static(path.join(__dirname, 'public')));
   app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
   });
+  
   app.get('/api/urls', async (req, res) => {
     try {
       const urls = await Url.find();
@@ -59,6 +66,7 @@ const urlSchema = new mongoose.Schema({
       res.status(500).json({ error: 'Internal server error' });
     }
   });
+  
   app.get('/:shortUrl', async (req, res) => {
     const { shortUrl } = req.params;
     try {
@@ -74,7 +82,9 @@ const urlSchema = new mongoose.Schema({
     }
   });
 
+
   const port = process.env.PORT || 3000;
-app.listen(port, () => {
+
+  app.listen(port, () => {
   console.log(`Server started on port ${port}`);
 });

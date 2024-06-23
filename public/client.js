@@ -13,7 +13,7 @@ form.addEventListener('submit', async (e) => {
   }
 
   try {
-    //Shortening using api call
+    // Shortening using API call
     const response = await fetch('/api/shorten', {
       method: 'POST',
       headers: {
@@ -23,15 +23,15 @@ form.addEventListener('submit', async (e) => {
     });
     const data = await response.json();
     const shortUrl = data.shortUrl;
-    shortUrlElement.innerHTML = `Short URL: <a href="${shortUrl}" target="_blank">${shortUrl}</a>`;
+    shortUrlElement.innerHTML = `Short URL: <a href="/${shortUrl}" target="_blank">/${shortUrl}</a>`;
 
-    // Add the new URL to the table dynamically in the Ui
+    // Add the new URL to the table dynamically in the UI
     const row = document.createElement('tr');
     const fullUrlCell = document.createElement('td');
     const shortUrlCell = document.createElement('td');
 
-    fullUrlCell.appendChild(createLink(fullUrl));
-    shortUrlCell.appendChild(createLink(shortUrl));
+    fullUrlCell.appendChild(createLink(fullUrl, true));
+    shortUrlCell.appendChild(createLink(shortUrl, false));
 
     row.appendChild(fullUrlCell);
     row.appendChild(shortUrlCell);
@@ -42,17 +42,17 @@ form.addEventListener('submit', async (e) => {
   }
 });
 
-//Function to Validate the URL
+// Function to validate the URL
 function isValidUrl(url) {
   const pattern = /^https:\/\/.*/;
   return pattern.test(url);
 }
 
 // Function to create a clickable link
-function createLink(url) {
+function createLink(url, isFullUrl = true) {
   const link = document.createElement('a');
-  link.href = url;
-  link.textContent = url;
+  link.href = isFullUrl ? url : `/${url}`;
+  link.textContent = isFullUrl ? url : `/${url}`;
   link.target = '_blank';
   return link;
 }
@@ -74,8 +74,8 @@ async function fetchDatabaseContents() {
       const fullUrlCell = document.createElement('td');
       const shortUrlCell = document.createElement('td');
 
-      fullUrlCell.appendChild(createLink(url.fullUrl));
-      shortUrlCell.appendChild(createLink(url.shortUrl));
+      fullUrlCell.appendChild(createLink(url.fullUrl, true));
+      shortUrlCell.appendChild(createLink(url.shortUrl, false));
 
       row.appendChild(fullUrlCell);
       row.appendChild(shortUrlCell);
